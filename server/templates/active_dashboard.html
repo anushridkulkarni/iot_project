@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Passengers in the Queue</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
+    background-color: #f5f5f5;
+  }
+  #active-count {
+    font-size: 15em; /* Increased font size */
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  #current-time {
+    font-size: 1.2em;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+<h1>Passengers in the Queue</h1>
+<div id="active-count">0</div>
+<div id="current-time"></div>
+
+<script>
+function updateActiveCount() {
+  fetch('/active')
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('active-count').textContent = data.active_count;
+    })
+    .catch(err => {
+      document.getElementById('active-count').textContent = 'Error';
+      console.error('Error fetching active count:', err);
+    });
+}
+
+function updateCurrentTime() {
+  const now = new Date();
+  document.getElementById('current-time').textContent = now.toLocaleString();
+}
+
+function refresh() {
+  updateActiveCount();
+  updateCurrentTime();
+}
+
+// Initial load
+refresh();
+
+// Update every 5 seconds
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>
+

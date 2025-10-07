@@ -1,55 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Passenger Counter Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-            background: #fafafa;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 0 10px #ddd;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
-        th {
-            background: #333;
-            color: white;
-        }
-        img {
-            max-width: 150px;
-            border-radius: 6px;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Passenger Counter Dashboard</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  .passenger-entry {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 15px;
+    max-width: 300px;
+  }
+  img {
+    width: 100%;
+    max-width: 200px;
+    display: block;
+    margin-bottom: 10px;
+  }
+  button {
+    padding: 8px 15px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+</style>
 </head>
 <body>
-    <h1>Passenger Counter Dashboard</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Passenger Count</th>
-                <th>Captured Image</th>
-            </tr>
-        </thead>
-        <tbody id="log-table-body">
-            <!-- logs will be injected here -->
-        </tbody>
-    </table>
+<h1>Passenger Counter Dashboard</h1>
 
-    <script src="/static/js/live_update.js"></script>
+<div id="passengers-container">
+  {% for passenger in passengers %}
+  <div class="passenger-entry" id="passenger-{{ passenger.id }}">
+    <img src="{{ url_for('uploaded_file', filename=passenger.photo_file_name) }}" alt="Passenger photo" />
+    <p>Captured at: {{ passenger.date_time|datetimeformat }}</p>
+    {% if passenger.served == 0 %}
+      <button onclick="markServed({{ passenger.id }})">Served</button>
+    {% else %}
+      <button disabled>Served</button>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+function markServed(passengerId) {
+  fetch('/served/' + passengerId, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'same-origin'  // Use cookies/session for auth, no hardcoded auth headers
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      const btn = document.querySelector(`#passenger-${passengerId} button`);
+      btn.innerText = 'Served';
+      btn.disabled = true;
+      alert('Passenger marked as served successfully.');
+    } else if (data.status === 'already_served' || data.status === 'exists') {
+      alert('Passenger is already marked as served.');
+    } else {
+      alert('Failed to mark as served: ' + (data.error || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    alert('Network error: ' + error);
+  });
+}
+</script>
+
 </body>
 </html>
 

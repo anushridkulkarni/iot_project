@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Passenger Counter Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #fafafa;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px #ddd;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background: #333;
+            color: white;
+        }
+        img {
+            max-width: 150px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Passenger Counter Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Passenger Count</th>
+                <th>Captured Image</th>
+            </tr>
+        </thead>
+        <tbody id="log-table-body">
+            <!-- logs will be injected here -->
+        </tbody>
+    </table>
+
+    <script src="/static/js/live_update.js"></script>
+</body>
+</html>
+
